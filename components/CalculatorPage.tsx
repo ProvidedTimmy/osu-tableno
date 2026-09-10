@@ -3,10 +3,10 @@ import TabletCalculator from "./TabletCalculator.tsx";
 
 export default function CalculatorPage(): JSX.Element {
   return (
-    <main class="min-h-screen bg-gray-100 dark:bg-gray-900 flex items-center justify-center p-4">
-      <div class="bg-white dark:bg-gray-800 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.15)] dark:shadow-[0_4px_24px_-4px_rgba(0,0,0,0.3)] rounded-lg p-6 w-full max-w-[480px]">
-        <div class="flex justify-between items-start gap-4 mb-6">
-          <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+    <main class="min-h-screen bg-gray-100 dark:bg-gray-900 flex items-start justify-center px-[12px] py-6 sm:py-10">
+      <div class="bg-white dark:bg-gray-800 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.15)] dark:shadow-[0_4px_24px_-4px_rgba(0,0,0,0.3)] rounded-lg p-[16px] sm:p-6 w-full max-w-[560px]">
+        <div class="flex flex-wrap justify-between items-start gap-4 mb-6">
+          <h1 class="min-w-0 flex-1 basis-64 break-words text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
             osu! Tablet Area Calculator
           </h1>
           <a
