@@ -1,9 +1,9 @@
 import { useSignal } from "@preact/signals";
 import type { JSX } from "preact";
 import { useEffect } from "preact/hooks";
-import { TabletForm } from "../components/TabletForm.tsx";
-import { TabletResultDisplay } from "../components/TabletResultDisplay.tsx";
-import TabletSlider from "../components/TabletSlider.tsx";
+import { TabletForm } from "./TabletForm.tsx";
+import { TabletResultDisplay } from "./TabletResultDisplay.tsx";
+import TabletSlider from "./TabletSlider.tsx";
 import { calculateOptimalArea } from "../utils/calculations.ts";
 import { TABLETS } from "../utils/constants/tablets.ts";
 

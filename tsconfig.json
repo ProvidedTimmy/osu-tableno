@@ -11,5 +11,5 @@
     "strict": true,
     "skipLibCheck": true
   },
-  "include": ["pages/**/*.tsx", "components/**/*.tsx", "islands/**/*.tsx", "utils/**/*.ts"]
+  "include": ["pages/**/*.tsx", "components/**/*.tsx", "utils/**/*.ts"]
 }

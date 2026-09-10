@@ -1,5 +1,5 @@
 import type { JSX } from "preact";
-import TabletCalculator from "../islands/TabletCalculator.tsx";
+import TabletCalculator from "./TabletCalculator.tsx";
 
 export default function CalculatorPage(): JSX.Element {
   return (

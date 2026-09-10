@@ -35,13 +35,6 @@ export default function TabletSlider(
                     }}
                     className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 accent-blue-600 dark:accent-blue-500"
                 />
-                {
-                    /* <div className="mt-1 grid grid-cols-3 text-sm text-gray-500 dark:text-gray-400">
-                    <span className="text-left">1%</span>
-                    <span className="text-center">50%</span>
-                    <span className="text-right">100%</span>
-                </div> */
-                }
             </div>
         </fieldset>
     );
