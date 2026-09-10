@@ -9,7 +9,18 @@ A lightweight, browser-based tablet area calculator for osu!.
 1. Select your tablet brand and model.
 2. Keep the default 4:3 ratio, choose 16:9, or enter a custom width-to-height ratio.
 3. Adjust **Area scale**, or enter exact width and height in millimeters.
-4. Use the result as a starting point in your tablet driver.
+4. Use **Copy width** and **Copy height** to transfer the values into your tablet driver.
+5. Use **Share config** to copy a link that restores the selected tablet, dimensions,
+   ratio, and lock state. Links contain configuration only.
+
+The last valid configuration is remembered locally in this browser. A shared
+link takes precedence over saved settings. Editing a shared configuration clears
+its old URL fragment so reloading restores your latest valid edits. **Reset**
+clears the remembered configuration and returns to the initial controls.
+
+If browser storage is blocked, the calculator still works. If clipboard access
+is blocked, selected text is shown for manual copying. Invalid configurations
+are not saved or shared.
 
 **Lock aspect ratio** keeps width and height linked. Turn it off to edit them
 independently. The preview shows the selected area inside the full tablet;
@@ -54,7 +65,11 @@ deploy to GitHub Pages. For a fork, select **GitHub Actions** under
 **Settings → Pages → Build and deployment → Source**.
 
 Tablet presets are in `utils/constants/tablets.ts`; calculations are in
-`utils/calculations.ts`.
+`utils/calculations.ts`. Preset dimensions match the pinned
+[OpenTabletDriver configuration snapshot](https://github.com/OpenTabletDriver/OpenTabletDriver/tree/1cad28e3f6bc1616d4f01fbea127b105cddc0bbe/OpenTabletDriver.Configurations/Configurations).
+The dataset uses exact model names because similarly named Wacom models can
+have different dimensions. These are the dimensions used by OpenTabletDriver,
+which may differ from rounded dimensions in product marketing.
 
 ## Credits and references
 

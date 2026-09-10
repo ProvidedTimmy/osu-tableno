@@ -1,36 +1,13 @@
 import type { JSX } from "preact";
-import { useState } from "preact/hooks";
+import { useEffect, useRef, useState } from "preact/hooks";
 import { TabletForm } from "./TabletForm.tsx";
 import { TabletResultDisplay } from "./TabletResultDisplay.tsx";
 import TabletSlider from "./TabletSlider.tsx";
 import { calculateArea, getMaximumArea } from "../utils/calculations.ts";
-import { TABLETS } from "../utils/constants/tablets.ts";
+import { TABLETS, TABLET_DATA_SOURCE } from "../utils/constants/tablets.ts";
+import { DEFAULT_SETTINGS, STORAGE_KEY, decodeConfig, encodeConfig, loadSettings, positive, selectedRatio, textNumber } from "../utils/settings.ts";
+import type { Preset, Settings } from "../utils/settings.ts";
 import type { TabletDimensions } from "../utils/types/tablet.ts";
-
-type Preset = "4:3" | "16:9" | "custom";
-interface Settings {
-    brand: string;
-    model: string;
-    preset: Preset;
-    ratioWidth: string;
-    ratioHeight: string;
-    locked: boolean;
-    scale: string;
-    width: string;
-    height: string;
-}
-
-const positive = (value: number): boolean => Number.isFinite(value) && value > 0;
-const textNumber = (value: number): string => Number(value.toFixed(8)).toString();
-
-function selectedRatio(settings: Settings): number | null {
-    if (settings.preset === "4:3") return 4 / 3;
-    if (settings.preset === "16:9") return 16 / 9;
-    const width = Number(settings.ratioWidth);
-    const height = Number(settings.ratioHeight);
-    if (![width, height].every((value) => Number.isFinite(value) && value >= 0.1 && value <= 100)) return null;
-    return width / height;
-}
 
 function fitSelection(settings: Settings, tablet?: TabletDimensions): Settings {
     const ratio = selectedRatio(settings);
@@ -41,11 +18,72 @@ function fitSelection(settings: Settings, tablet?: TabletDimensions): Settings {
 }
 
 export default function TabletCalculator(): JSX.Element {
-    const [settings, setSettings] = useState<Settings>({
-        brand: "", model: "", preset: "4:3", ratioWidth: "4", ratioHeight: "3",
-        locked: true, scale: "50", width: "", height: "",
-    });
+    const [initial] = useState(loadSettings);
+    const [settings, setSettings] = useState<Settings>(initial.settings);
+    const [notice, setNotice] = useState(initial.notice);
+    const [copyNotice, setCopyNotice] = useState("");
+    const [manualCopy, setManualCopy] = useState("");
+    const keepHash = useRef(true);
+    const copyAttempt = useRef(0);
+    const manualCopyField = useRef<HTMLTextAreaElement>(null);
+
+    useEffect(() => {
+        if (keepHash.current) keepHash.current = false;
+        else {
+            setNotice("");
+            if (window.location.hash) window.history.replaceState(null, "", window.location.pathname + window.location.search);
+        }
+        copyAttempt.current += 1;
+        setCopyNotice("");
+        setManualCopy("");
+        const config = encodeConfig(settings);
+        if (config) {
+            try { window.localStorage.setItem(STORAGE_KEY, config); } catch { /* Calculation still works without storage. */ }
+        }
+    }, [settings]);
+
+    useEffect(() => {
+        const restore = (): void => {
+            const shared = decodeConfig(window.location.hash);
+            keepHash.current = true;
+            setSettings(shared || { ...DEFAULT_SETTINGS });
+            setNotice(shared ? "Shared configuration loaded." : window.location.hash ? "This shared configuration is invalid. Choose a tablet to start." : "");
+        };
+        window.addEventListener("hashchange", restore);
+        return () => window.removeEventListener("hashchange", restore);
+    }, []);
+
+    useEffect(() => {
+        if (manualCopy) {
+            manualCopyField.current?.focus();
+            manualCopyField.current?.select();
+        }
+    }, [manualCopy]);
+
+    const copy = async (value: string, message: string): Promise<void> => {
+        const attempt = ++copyAttempt.current;
+        setManualCopy("");
+        try {
+            await navigator.clipboard.writeText(value);
+            if (attempt === copyAttempt.current) setCopyNotice(message);
+        } catch {
+            if (attempt === copyAttempt.current) {
+                setCopyNotice("Automatic copying is unavailable. Copy the selected text below.");
+                setManualCopy(value);
+            }
+        }
+    };
+
+    const reset = (): void => {
+        try { window.localStorage.removeItem(STORAGE_KEY); } catch { /* Reset remains available without storage. */ }
+        window.history.replaceState(null, "", window.location.pathname + window.location.search);
+        keepHash.current = true;
+        setSettings({ ...DEFAULT_SETTINGS });
+        setNotice("Settings reset.");
+    };
+
     const tablet = TABLETS[settings.brand]?.[settings.model];
+    const config = encodeConfig(settings);
     const ratio = selectedRatio(settings);
     const area = { width: Number(settings.width), height: Number(settings.height) };
     const scale = Number(settings.scale);
@@ -103,6 +141,7 @@ export default function TabletCalculator(): JSX.Element {
 
     return (
         <div class="space-y-5 text-gray-900 dark:text-gray-100">
+            {notice && <p role="status" class="text-sm text-gray-600 dark:text-gray-400">{notice}</p>}
             <div class="grid grid-cols-1 min-[400px]:grid-cols-2 gap-4">
                 <TabletForm
                     selectedBrand={settings.brand}
@@ -174,13 +213,30 @@ export default function TabletCalculator(): JSX.Element {
             </fieldset>
 
             {error && <p role="alert" class="rounded-lg bg-red-50 p-3 text-sm text-red-800 dark:bg-red-950/40 dark:text-red-200">{error}</p>}
-            {tablet && !error && <TabletResultDisplay area={area} tablet={tablet} />}
+            {tablet && !error && <>
+                <TabletResultDisplay area={area} tablet={tablet} />
+                <div class="flex flex-wrap gap-2">
+                    <button type="button" class="action-button" onClick={() => copy(settings.width, "Width copied.")}>Copy width</button>
+                    <button type="button" class="action-button" onClick={() => copy(settings.height, "Height copied.")}>Copy height</button>
+                    <button type="button" class="action-button" disabled={!config}
+                        onClick={() => config && copy(window.location.origin + window.location.pathname + "#" + config, "Configuration link copied.")}>Share config</button>
+                </div>
+            </>}
+            {copyNotice && <p role="status" class="text-sm text-gray-600 dark:text-gray-400">{copyNotice}</p>}
+            {manualCopy && <label class="block text-sm">Text to copy
+                <textarea ref={manualCopyField} readOnly value={manualCopy} onFocus={(event) => event.currentTarget.select()} class="field-input mt-1 w-full" rows={3} />
+            </label>}
             {!tablet && <p class="text-center text-sm text-gray-600 dark:text-gray-400">Choose a tablet to see your dimensions and preview.</p>}
 
+            <div class="flex flex-wrap items-center justify-between gap-3 text-sm text-gray-600 dark:text-gray-400">
+                <span>Last valid settings are saved locally when available.</span>
+                <button type="button" onClick={reset} class="underline underline-offset-2 hover:text-gray-900 dark:hover:text-gray-100">Reset</button>
+            </div>
             <details class="text-sm text-gray-600 dark:text-gray-400">
                 <summary class="cursor-pointer font-medium text-gray-800 dark:text-gray-200">About ratios and mapping</summary>
                 <p class="mt-2">These are physical tablet dimensions. 4:3 is the default shape, not a universal best setting. Choose the ratio that suits your driver mapping and preference.</p>
                 <p class="mt-2">Your mapped screen or window, driver settings, and osu! settings determine how the area feels. The preview does not represent the game playfield or change your driver settings.</p>
+                <p class="mt-2">Tablet dimensions follow <a href={TABLET_DATA_SOURCE} target="_blank" rel="noopener noreferrer" class="underline">OpenTabletDriver’s configuration data</a>.</p>
             </details>
         </div>
     );

@@ -8,6 +8,9 @@
     }
 }
 @layer components {
+    .action-button {
+        @apply rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-800 hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700;
+    }
     .dimension-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(min(100%, 8rem), 1fr));

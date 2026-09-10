@@ -3,8 +3,8 @@ import assert from 'node:assert/strict';
 import { calculateArea, getMaximumArea } from '../utils/calculations.ts';
 import { TABLETS } from '../utils/constants/tablets.ts';
 
-test('G540 fits a 4:3 area without stretching at 100%', () => {
-    assert.deepEqual(calculateArea(TABLETS['xp-pen'].G540, 100), { width: 127, height: 95.25 });
+test('a narrow tablet fits a 4:3 area without stretching at 100%', () => {
+    assert.deepEqual(calculateArea({ width: 127, height: 101.6 }, 100), { width: 127, height: 95.25 });
 });
 
 test('every preset stays within its tablet and preserves the requested ratio', () => {
