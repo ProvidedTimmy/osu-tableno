@@ -18,10 +18,11 @@ export function TabletForm(
     return (
         <>
             <fieldset className="relative rounded-lg border border-gray-200 dark:border-gray-600 px-4 pb-4 pt-2">
-                <legend className="text-xs font-medium text-gray-500 dark:text-gray-400 px-1">
+                <legend className="text-sm font-medium text-gray-500 dark:text-gray-400 px-1">
                     BRAND
                 </legend>
                 <select
+                    aria-label="Tablet brand"
                     value={selectedBrand}
                     onChange={onBrandChange}
                     className={selectClassName}
@@ -36,10 +37,11 @@ export function TabletForm(
             </fieldset>
 
             <fieldset className="relative rounded-lg border border-gray-200 dark:border-gray-600 px-4 pb-4 pt-2">
-                <legend className="text-xs font-medium text-gray-500 dark:text-gray-400 px-1">
+                <legend className="text-sm font-medium text-gray-500 dark:text-gray-400 px-1">
                     MODEL
                 </legend>
                 <select
+                    aria-label="Tablet model"
                     value={selectedModel}
                     onChange={(event): void => {
                         onModelChange(

@@ -17,6 +17,7 @@ export default function TabletCalculator(): JSX.Element {
         const target = event.target as HTMLSelectElement;
         selectedBrand.value = target.value;
         selectedModel.value = "";
+        calculationResult.value = "";
     };
 
     const handleCalculate = (): void => {
@@ -52,7 +53,7 @@ export default function TabletCalculator(): JSX.Element {
 
     return (
         <div class="space-y-6">
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 min-[400px]:grid-cols-2 gap-4">
                 <TabletForm
                     selectedBrand={selectedBrand.value}
                     selectedModel={selectedModel.value}

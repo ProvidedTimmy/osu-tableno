@@ -10,14 +10,13 @@ export default function TabletSlider(
 ): JSX.Element {
     return (
         <fieldset className="relative rounded-lg border border-gray-200 dark:border-gray-600 px-4 pb-4 pt-2">
-            <legend className="text-xs font-medium text-gray-500 dark:text-gray-400 px-1">
+            <legend className="text-sm font-medium text-gray-500 dark:text-gray-400 px-1">
                 AREA PERCENTAGE
             </legend>
             <div className="relative mt-8 mb-4">
                 <output
                     style={{
-                        left: `calc(${value}% - 1.25rem)`,
-                        transform: "translateX(0)",
+                        left: `calc(${(value - 1) / 99} * (100% - 3rem))`,
                     }}
                     className="absolute -top-6 bg-blue-600 dark:bg-blue-500 text-white px-2 py-1 rounded text-sm min-w-[3rem] text-center"
                 >
@@ -25,6 +24,7 @@ export default function TabletSlider(
                 </output>
                 <input
                     type="range"
+                    aria-label="Area percentage"
                     min="1"
                     max="100"
                     value={value}
@@ -36,7 +36,7 @@ export default function TabletSlider(
                     className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 accent-blue-600 dark:accent-blue-500"
                 />
                 {
-                    /* <div className="mt-1 grid grid-cols-3 text-xs text-gray-500 dark:text-gray-400">
+                    /* <div className="mt-1 grid grid-cols-3 text-sm text-gray-500 dark:text-gray-400">
                     <span className="text-left">1%</span>
                     <span className="text-center">50%</span>
                     <span className="text-right">100%</span>

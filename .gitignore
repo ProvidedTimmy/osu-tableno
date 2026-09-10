@@ -389,3 +389,7 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+# GitHub Pages build and local tooling
+node_modules/
+dist/
+.sites-runtime/
